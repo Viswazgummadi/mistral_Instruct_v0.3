@@ -1,0 +1,46 @@
+{
+  "builder_name": "csv",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "csv",
+  "dataset_size": 12734,
+  "description": "",
+  "download_checksums": {
+    "/home/snsrlvm6/Desktop/Proj_k/PYQ.csv": {
+      "num_bytes": 11980,
+      "checksum": null
+    }
+  },
+  "download_size": 11980,
+  "features": {
+    "Question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "Answer": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "file_name": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 24714,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 12734,
+      "num_examples": 90,
+      "dataset_name": "csv"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
