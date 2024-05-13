@@ -46,9 +46,9 @@ def save_as_jsonl(data, filename):
             f.write(json.dumps(i) + "\n")
 
 qa_prompt = """
-Question 1
-Question 2
-Question 3
+Why was a separate standard retained for pig iron and cast iron?
+What is the reproducibility for nickel content between 0.5 to 5 percent?
+What is the recommended concentration of hydrochloric acid?
 """
 
 file_paths = [
