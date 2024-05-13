@@ -1,174 +1,138 @@
-import os
-import PyPDF2
-import json
-from datasets import load_dataset
-from transformers import AutoTokenizer
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core import Settings, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
+from datasets import DatasetDict, Dataset
 
-def extract_text_from_file(file_path):
-    with open(file_path, 'rb') as file:
-        # Determine the type of the file based on its extension
-        if os.path.splitext(file_path)[1] == '.pdf':
-            # If the file is a PDF, use PyPDF2 to extract the text
-            pdf_reader = PyPDF2.PdfReader(file)
-            text = ''
-            for page_obj in pdf_reader.pages:
-                text += page_obj.extract_text()
-        else:
-            # If the file is a text file, simply read the file
-            file = open(file_path, 'r')
-            text = file.read()
-    return text
-
-def prepare_qa_data(qa_prompt, file_paths):
-    qa_data = []
-    for file_path in file_paths:
-        # Extract the base name of the file (without extension)
-        base_filename = os.path.splitext(os.path.basename(file_path))[0]
-        # Extract the text from the file
-        text = extract_text_from_file(file_path)
-        # Iterate over the questions in the prompt
-        for question in qa_prompt.split('\n'):
-            # Include the filename of the corresponding file
-            file_name = base_filename + os.path.splitext(file_path)[1]
-            # Since we don't have the answer in the prompt, we'll set it to None
-            answer = None
-            qa_data.append({'file_name': file_name, 'context': text, 'question': question, 'answer': answer })
-    return qa_data
-
-def save_as_jsonl(data, filename):
-    with open(filename, 'w') as f:
-        for i in data:
-            f.write(json.dumps(i) + "\n")
-
-qa_prompt = """
-Why was a separate standard retained for pig iron and cast iron?
-What is the reproducibility for nickel content between 0.5 to 5 percent?
-What is the recommended concentration of hydrochloric acid?
-"""
-
-file_paths = [
-    '/mnt/data1/backup/viswaz/Project_K/pdf/228_4.pdf',
-    '/mnt/data1/backup/viswaz/Project_K/pdf/228_5.pdf',
-    # Add more files here
-]
-
-# Limit the number of files
-file_paths = file_paths[:10]
-
-qa_data = prepare_qa_data(qa_prompt, file_paths)
-
-# Save the data as a single JSONL file
-save_as_jsonl(qa_data, "qa_data.jsonl")
-
-# Load the dataset
-dataset = load_dataset('json', data_files='qa_data.jsonl')
-
-# Set up the embedding model and the retriever
+# import any embedding model on HF hub (https://huggingface.co/spaces/mteb/leaderboard)
 Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+# Settings.embed_model = HuggingFaceEmbedding(model_name="thenlper/gte-large") # alternative model
+
+Settings.llm = None
 Settings.chunk_size = 256
 Settings.chunk_overlap = 25
-documents = SimpleDirectoryReader(".").load_data()
+
+# articles available here:  {add GitHub repo}
+documents = SimpleDirectoryReader("pdf").load_data()
+
+# some ad hoc document refinement
+for doc in documents:
+    if "Member-only story" in doc.text:
+        documents.remove(doc)
+        continue
+
+    if "The Data Entrepreneurs" in doc.text:
+        documents.remove(doc)
+
+    if " min read" in doc.text:
+        documents.remove(doc)
+
+# store docs into vector DB
 index = VectorStoreIndex.from_documents(documents)
+# set number of docs to retrieve
 top_k = 3
-retriever = VectorIndexRetriever(index=index, similarity_top_k=top_k)
-query_engine = RetrieverQueryEngine(retriever=retriever, node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.5)])
 
-# Load the tokenizer
-
-
-# Define a function to create the prompt
-def create_prompt(sample):
-    bos_token = "<s>"
-    base_prompt1 = "below context is from "
-    base_prompt2 = ", answer the following questions based on the context given \n"
-    file_name = sample['file_name']
-    context = sample['context']
-    question = sample['question']
-    eos_token = "</s>"
-    full_prompt = ""
-    full_prompt += bos_token
-    full_prompt += "[INST]"
-    full_prompt += "###Instruction:\n"
-    full_prompt += base_prompt1
-    full_prompt += file_name
-    full_prompt += base_prompt2
-    full_prompt += "\n\n###file_name:\n" + file_name
-    full_prompt += "\n\n###context:\n" + context
-    full_prompt += "\n\n###question:\n" + question
-    full_prompt += "[/INST]"
-    full_prompt += "\n\n###answer:\n"
-    full_prompt += eos_token
-    return full_prompt
-
-
-# Define a function to answer a question using the retriever
-def answer_question(question, query_engine):
-    response = query_engine.query(question)
-    context = "Context:\n"
-    for i in range(top_k):
-        context = context + response.source_nodes[i].text + "\n\n"
-    return context
-
-# Define a function to create a prompt and answer a question
-def create_prompt_and_answer(sample, query_engine):
-    prompt = create_prompt(sample)
-    question = sample['question']
-    context = answer_question(question, query_engine)
-    full_prompt = prompt + context
-    return full_prompt
-
-# Create a prompt and answer a question
-sample = dataset['train'][0]
-prompt_and_answer = create_prompt_and_answer(sample, query_engine)
-print(prompt_and_answer)
-
-
-# Load the language model
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-import torch
-
-device = "cuda"
-# model_id="mistralai/Mistral-7B-Instruct-v0.2"
-model_id="mistralai/Mistral-7B-v0.1"
-nf4_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_use_double_quant=False,
-    bnb_4bit_compute_dtype=torch.bfloat16
+# configure retriever
+retriever = VectorIndexRetriever(
+    index=index,
+    similarity_top_k=top_k,
+)
+# assemble query engine
+query_engine = RetrieverQueryEngine(
+    retriever=retriever,
+    node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.5)],
 )
 
-import os
-os.environ["HF_TOKEN"] = "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"
-os.environ['HF_HOME'] = '/mnt/data1/backup/viswaz/Project_K/huggingface_cache/'
+# load questions
+with open('questions.txt', 'r') as file:
+    questions = file.readlines()
 
+# strip newline characters from questions
+questions = [q.strip() for q in questions]
+
+# create a list to store the mapping of questions to their respective contexts
+question_context_pairs = []
+
+# iterate over each question and query the engine
+for i, question in enumerate(questions):
+    response = query_engine.query(question)
+
+    # create a combined context from the top 3 chunks
+    context = "Context:\n"
+    for j in range(top_k):
+        context = context + response.source_nodes[j].text + "\n\n"
+
+    # store the mapping of the question to its respective context
+    question_context_pairs.append({"question": question, "context": context})
+
+# create a dictionary with two lists: questions and contexts
+data = {
+    "question": [pair["question"] for pair in question_context_pairs],
+    "context": [pair["context"] for pair in question_context_pairs]
+}
+
+# create a Hugging Face Dataset from the dictionary
+dataset = Dataset.from_dict(data)
+
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+model_id="mistralai/Mistral-7B-Instruct-v0.2"
+# Load the tokenizer and the model
+tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
     device_map="auto",
-    quantization_config=nf4_config,
-    torch_dtype=torch.bfloat16,
-    trust_remote_code=True,
     cache_dir = "/mnt/data1/backup/viswaz/Project_K/huggingface_cache/",
-    
 )
-tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-tokenizer.pad_token = tokenizer.eos_token
-tokenizer.padding_size = "right"
-
-# Define a function to generate a response using the language model
 def generate_response(prompt, model):
-    inputs = tokenizer(prompt, return_tensors="pt")
-    outputs = model.generate(input_ids=inputs["input_ids"].to("cuda"), max_new_tokens=280)
-    response = tokenizer.batch_decode(outputs)[0]
-    return response
+  encoded_input = tokenizer(prompt,  return_tensors="pt", add_special_tokens=True)
+  model_inputs = encoded_input.to('cuda')
 
-# Generate a response using the language model
-sample = dataset['train'][0]
-prompt_and_answer = create_prompt_and_answer(sample, query_engine)
-response = generate_response(prompt_and_answer, model)
-print(response)
+  generated_ids = model.generate(**model_inputs,
+                                 max_new_tokens=150,
+                                 do_sample=True,
+                                 pad_token_id=tokenizer.eos_token_id)
+
+  return generated_ids
+
+# prompt (no context)
+intstructions_string = f""" you are a textbot that helps in finding answers to questions in the research papers, blogs,pdf's or any text context.
+,make your answers more meaningful and short,end all responses with a signature after answer "-yourbot"
+
+please answer the following question
+"""
+prompt_template_w_context = lambda context, question: f'''[INST] {intstructions_string}
+
+{context}
+
+Please answer to the following question. Use the context above if it is helpful.
+
+{question}
+
+[/INST]'''
+# Initialize an empty list to store the answers
+answers = []
+
+# Iterate over each question in the dataset
+for i in range(len(dataset)):
+    # Get the question and the context
+    question = dataset[i]["question"]
+    context = dataset[i]["context"]
+
+    # Define the prompt as the concatenation of the context and the question
+    prompt = prompt_template_w_context(context, question)
+
+    outputs = generate_response(prompt, model)
+
+    # Decode the generated IDs and store the answer
+    decoded_output = tokenizer.batch_decode(outputs)[0]
+    answers.append(decoded_output)
+
+# Print the answers
+for i, answer in enumerate(answers):
+    print(f"Question {i+1}: {dataset[i]['question']}")
+    print("\n\n\n")
+    print(f"Answer: {answer}\n")
+    print("\n\n\n")
