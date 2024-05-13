@@ -4,6 +4,7 @@ from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from datasets import DatasetDict, Dataset
+import re
 
 # import any embedding model on HF hub (https://huggingface.co/spaces/mteb/leaderboard)
 Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
@@ -75,6 +76,7 @@ data = {
 # create a Hugging Face Dataset from the dictionary
 dataset = Dataset.from_dict(data)
 
+
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 model_id="mistralai/Mistral-7B-Instruct-v0.2"
@@ -85,6 +87,7 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto",
     cache_dir = "/mnt/data1/backup/viswaz/Project_K/huggingface_cache/",
 )
+
 
 def generate_response(prompt, model):
   encoded_input = tokenizer(prompt,  return_tensors="pt", add_special_tokens=True)
@@ -97,9 +100,11 @@ def generate_response(prompt, model):
 
   return generated_ids
 
-# prompt (no context)
+
+
+# prompt (context)
 intstructions_string = f""" you are a textbot that helps in finding answers to questions in the research papers, blogs,pdf's or any text context.
-,make your answers more meaningful and short,end all responses with a signature after answer "-yourbot"
+,make your answers more meaningful and short"
 
 please answer the following question
 """
@@ -112,8 +117,9 @@ Please answer to the following question. Use the context above if it is helpful.
 {question}
 
 [/INST]'''
-# Initialize an empty list to store the answers
-answers = []
+
+# Initialize an empty list to store the texts between [/INST] and </s> tags
+texts_between_inst_and_eos = []
 
 # Iterate over each question in the dataset
 for i in range(len(dataset)):
@@ -126,13 +132,16 @@ for i in range(len(dataset)):
 
     outputs = generate_response(prompt, model)
 
-    # Decode the generated IDs and store the answer
+    # Decode the generated IDs
     decoded_output = tokenizer.batch_decode(outputs)[0]
-    answers.append(decoded_output)
 
-# Print the answers
-for i, answer in enumerate(answers):
-    print(f"Question {i+1}: {dataset[i]['question']}")
-    print("\n\n\n")
-    print(f"Answer: {answer}\n")
-    print("\n\n\n")
+    # Extract texts between [/INST] and </s> tags
+    inst_eos_texts = re.findall(r'\[\/INST\](.*?)\<\/s\>', decoded_output, re.DOTALL)
+    texts_between_inst_and_eos.extend(inst_eos_texts)
+
+# Print the texts between [/INST] and </s> tags
+# print("Texts between [/INST] and </s> tags:")
+for text in texts_between_inst_and_eos:
+    print(text.strip())
+    print("\n")
+    
