@@ -1,184 +1,150 @@
-input is a pdf/text or any text containg file and a text prompt which contains questions and those auestions are to be answered baesd on the data from pdf if not available in pdf then it should create on its own
-
-multiple pdfs can be given as input set a limit to it 
-many questions can also be asked and each question is addressed with borders like dont mix up questions and answer combinely give answer for each question
-
-
-first convert all the data in pdf to suitable huggingface dataset format
-modify this 
-
-this is qritten for files in a pdf named folder modify to work with all files input 
-and questoins are in csv files in this but in prompt we have only question so address it properly
+import gradio as gr
 import os
 import PyPDF2
-import pandas as pd
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 
-def extract_text_from_pdf(file_path):
-    with open(file_path, 'rb') as pdf_file_obj:
-        pdf_reader = PyPDF2.PdfReader(pdf_file_obj)
-        text = ''
-        for page_obj in pdf_reader.pages:
-            text += page_obj.extract_text()
-    return text
-
-def prepare_qa_data(qa_directory, pdf_directory):
-    qa_data = []
-    for filename in os.listdir(qa_directory):
-        # Check if the file is a CSV
-        if filename.endswith('.csv'):
-            # Construct the full file path
-            csv_file_path = os.path.join(qa_directory, filename)
-            # Extract the base name of the file (without extension)
-            base_filename = os.path.splitext(filename)[0]
-            # Construct the full file path of the corresponding PDF
-            pdf_file_path = os.path.join(pdf_directory, f'{base_filename}.pdf')
-            # Read the CSV file
-            qa_df = pd.read_csv(csv_file_path)
-            # Extract the text from the PDF file
-            text = extract_text_from_pdf(pdf_file_path)
-            # Preprocess the text
-            # preprocessed_text = preprocess_text(text)
-            # Iterate over the rows in the CSV file
-            for _, row in qa_df.iterrows():
-                question = row['Question']
-                answer = row['Answer']
-                # Include the filename of the corresponding PDF
-                pdf_filename = base_filename + '.pdf'
-                qa_data.append({'pdf_filename': pdf_filename, 'context': text, 'question': question, 'answer': answer })
-    return qa_data
-
-qa_directory = 'QNA'
-pdf_directory = 'pdf'
-qa_data = prepare_qa_data(qa_directory, pdf_directory)
-print(qa_data)
-import json
-
-def save_as_jsonl(data, filename):
-    with open(filename, 'w') as f:
-        for i in data:
-            f.write(json.dumps(i) + "\n")
-qa_directory = 'QNA'
-pdf_directory = 'pdf'
-qa_data = prepare_qa_data(qa_directory, pdf_directory)
-
-train_size = int(len(qa_data) * 0.8)
-train_data = qa_data[:train_size]
-test_data = qa_data[train_size:]
-save_as_jsonl(train_data, "train.jsonl")
-save_as_jsonl(test_data, "test.jsonl")
-
-data_files = {"train":"train.jsonl", "test":"test.jsonl"}
-dataset = load_dataset("json", data_files=data_files)
-dataset
-
-this creates a hugging face dataset 
-
-we should make it more efficient so we use
-chunking and mapping them
-
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.core import Settings, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_index.core import Settings, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.core.postprocessor import SimilarityPostprocessor
-# import any embedding model on HF hub (https://huggingface.co/spaces/mteb/leaderboard)
-Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
-# Settings.embed_model = HuggingFaceEmbedding(model_name="thenlper/gte-large") # alternative model
+from datasets import DatasetDict, Dataset
+import re
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
-Settings.llm = None
-Settings.chunk_size = 256
-Settings.chunk_overlap = 25
-# articles available here:  {add GitHub repo}
-documents = SimpleDirectoryReader("pdf").load_data()
-# some ad hoc document refinement
-print(len(documents))
-for doc in documents:
-    if "Member-only story" in doc.text:
-        documents.remove(doc)
-        continue
+def respond(files, question):
+    os.makedirs("pdf", exist_ok=True)
 
-    if "The Data Entrepreneurs" in doc.text:
-        documents.remove(doc)
+    documents = []
 
-    if " min read" in doc.text:
-        documents.remove(doc)
+    for i, file in enumerate(files):
+        if file.endswith('.pdf'):
+            pdf_file_obj = open(file, 'rb')
+            pdf_reader = PyPDF2.PdfFileReader(pdf_file_obj)
+            text = ''
+            for page_num in range(pdf_reader.numPages):
+                page_obj = pdf_reader.getPage(page_num)
+                text += page_obj.extractText()
+            documents.append(text)
+        else:
+            with open(file, 'r') as f:
+                documents.append(f.read())
 
-print(len(documents))
-# store docs into vector DB
-index = VectorStoreIndex.from_documents(documents)
-# set number of docs to retreive
-top_k = 3
+    # import any embedding model on HF hub (https://huggingface.co/spaces/mteb/leaderboard)
+    Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+    # Settings.embed_model = HuggingFaceEmbedding(model_name="thenlper/gte-large") # alternative model
 
-# configure retriever
-retriever = VectorIndexRetriever(
-    index=index,
-    similarity_top_k=top_k,
-)
-# assemble query engine
-query_engine = RetrieverQueryEngine(
-    retriever=retriever,
-    node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.5)],
-)
-# query documents
-query = "When was this standard adopted?"
-response = query_engine.query(query)
+    Settings.llm = None
+    Settings.chunk_size = 256
+    Settings.chunk_overlap = 25
 
-# reformat response
-context = "Context:\n"
-for i in range(top_k):
-    context = context + response.source_nodes[i].text + "\n\n"
+    # some ad hoc document refinement
+    for doc in documents:
+        if "Member-only story" in doc:
+            documents.remove(doc)
+            continue
 
-print(context)
-def create_prompt(sample):
-    bos_token = "<s>"
-    base_prompt1 = "below context is from "
-    base_prompt2 = ", answer the following questions based on the context given \n"
-    document = sample['pdf_filename']
-    # context = sample['context']
-    answer = sample['answer']
-    question = sample['question']
-    eos_token = "</s>"
-    full_prompt = ""
-    full_prompt += bos_token
-    full_prompt += "[INST]"
-    full_prompt += "###Instruction:\n"
-    full_prompt += base_prompt1
-    full_prompt += document
-    full_prompt += base_prompt2
-    # full_prompt += "[INST]"
-    full_prompt += "\n\n###pdf_filename:\n" + document
-    full_prompt += "\n\n###context:\n" + context
-    full_prompt += "\n\n###question:\n" + question
-    full_prompt += "[/INST]"
-    full_prompt += "\n\n###answer:\n" + answer
-    full_prompt += eos_token
-    print("------------------")
-    print(full_prompt)
-    print("---------------------------------------------------------------------------------------------------------------")
-    return full_prompt
+        if "The Data Entrepreneurs" in doc:
+            documents.remove(doc)
 
-create_prompt(selected_dataset_dict["train"][1])
-# prompt (context)
-intstructions_string = f""" you are a textbot that helps in finding answers to questions in the research papers, blogs,pdf's or any text context.
-,make your answers more meaningful and short,end all responses with a signature after answer "-yourbot"
+        if " min read" in doc:
+            documents.remove(doc)
 
-please answer the following question
-"""
-prompt_template_w_context = lambda context, question: f'''[INST] {intstructions_string}
+    # store docs into vector DB
+    index = VectorStoreIndex.from_documents(documents)
+    # set number of docs to retrieve
+    top_k = 3
 
-{context}
+    # configure retriever
+    retriever = VectorIndexRetriever(
+        index=index,
+        similarity_top_k=top_k,
+    )
+    # assemble query engine
+    query_engine = RetrieverQueryEngine(
+        retriever=retriever,
+        node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.5)],
+    )
 
-Please answer to the following question. Use the context above if it is helpful.
+    # create a list to store the mapping of questions to their respective contexts
+    question_context_pairs = []
 
-{question}
+    # iterate over each question and query the engine
+    response = query_engine.query(question)
 
-[/INST]'''
+    # create a combined context from the top 3 chunks
+    context = "Context:\n"
+    for j in range(top_k):
+        context = context + response.source_nodes[j].text + "\n\n"
 
+    # store the mapping of the question to its respective context
+    question_context_pairs.append({"question": question, "context": context})
 
-inputs = tokenizer(prompt, return_tensors="pt")
-outputs = model.generate(input_ids=inputs["input_ids"].to("cuda"), max_new_tokens=280)
+    # create a dictionary with two lists: questions and contexts
+    data = {
+        "question": [pair["question"] for pair in question_context_pairs],
+        "context": [pair["context"] for pair in question_context_pairs]
+    }
 
-print(tokenizer.batch_decode(outputs)[0])
+    # create a Hugging Face Dataset from the dictionary
+    dataset = Dataset.from_dict(data)
+
+    from transformers import AutoTokenizer, AutoModelForCausalLM
+
+    # model_id="mistralai/Mistral-7B-Instruct-v0.2"
+    model_id="Dobby091/KOKO"
+    # Load the tokenizer and the model
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id,
+        device_map="auto",
+        cache_dir = "/mnt/data1/backup/viswaz/Project_K/huggingface_cache/",
+    )
+
+    def generate_response(prompt, model):
+      encoded_input = tokenizer(prompt,  return_tensors="pt", add_special_tokens=True)
+      model_inputs = encoded_input.to('cuda')
+
+      generated_ids = model.generate(**model_inputs,
+                                     max_new_tokens=150,
+                                     do_sample=True,
+                                     pad_token_id=tokenizer.eos_token_id)
+
+      return generated_ids
+
+    intstructions_string = f""" you are a textbot that helps in finding answers to questions in the research papers, blogs,pdf's or any text context.
+    ,make your answers more meaningful and short"
+
+    please answer the following question
+    """
+    prompt_template_w_context = lambda context, question: f'''[INST] {intstructions_string}
+
+    {context}
+
+    Please answer to the following question. Use the context above if it is helpful.
+
+    {question}
+
+    [/INST]'''
+
+    prompt = prompt_template_w_context(context, question)
+
+    outputs = generate_response(prompt, model)
+
+    # Decode the generated IDs
+    decoded_output = tokenizer.batch_decode(outputs)[0]
+
+    # Extract texts between [/INST] and </s> tags
+    inst_eos_texts = re.findall(r'\[\/INST\](.*?)\<\/s\>', decoded_output, re.DOTALL)
+
+    return inst_eos_texts[0].strip() if inst_eos_texts else ""
+
+inputs = [
+    gr.File(type="filepath", label="Upload PDF/Text Files",file_count="multiple"),
+    gr.Text(label="Enter your question here")
+]
+
+output = gr.Text()
+
+interface = gr.Interface(respond, inputs=inputs, outputs=output, title="Question Answering System")
+
+if __name__ == "__main__":
+    interface.launch()
