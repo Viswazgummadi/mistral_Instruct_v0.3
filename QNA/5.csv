@@ -1,0 +1,31 @@
+Question,Answer
+"What is the numbering system used to categorize the colors in this standard, and how are the colors grouped?","The numbering system utilizes three-digit numbers where the first digit indicates the group of colors according to seven broad color divisions: Blue, Green, Yellow, Cream, and Buff; Brown and Pink; Red and Orange; Grey; and Violet."
+"How are new colors assigned numbers in this standard, and what precaution is taken to avoid overlap with existing numbers?",New colors are assigned numbers within specified ranges corresponding to their color groups. These new numbers are allocated in a manner that ensures they do not overlap with existing numbers within those ranges.
+What is the purpose of providing 'Munsell' references for each color in Table 1 of the standard?, 
+"How are the colorimetric values expressed in this standard, and what is their significance?","  The colorimetric values, expressed in terms of the trichromatic system for colorimetry, are provided as a permanent record of the standard colors obtained from spectrophotometric measurements. These values offer guidance in accurately reproducing and comparing colors."
+"What is the purpose of Annex A in the standard, and what information does it contain?","Annex A serves as a glossary of color terms and explains the 'Munsell' system briefly. It provides definitions for various color-related terms and concepts used throughout the standard, aiding in understanding and applying the specifications laid out in the document."
+"What is the definition of ""Grey"" according to A-1.17.1 and A-1.17.2?","A-1.17.1: Grey is defined as any achromatic sensation of luminosity intermediate between black and white. A-1.17.2: Applied to a secondary source, grey refers to a source that is partially absorbing at some or all visible wavelengths, but the reflected or transmitted light has the same color as that of the incident light."
+"What is meant by ""Hue"" according to A-1.18?","""Hue"" refers to the attribute of visual sensation that has given rise to color names such as blue, green, yellow, red, and purple."
+"What is the definition of ""Neutral Grey"" as per A-1.25?",Neutral Grey is applied to a secondary source that is equally absorbing at all visible wavelengths.
+"Define ""Shade"" according to A-1.27.","Shade"" refers to a color of the same hue and saturation but lower luminosity."
+"Explain the concept of ""Tint"" based on A-1.33.","""Tint"" is the weak color resulting from the addition of a small amount of coloring matter to white."
+"What does ""Tone"" refer to according to A-1.35?","""Tone"" refers to a slight variant of a color."
+"Describe the concept of ""Undertone"" as per A-1.36.","""Undertone"" refers to the color of a pigment when it is used in very thin layers or greatly extended with white, which may often differ from that of the masstone."
+"What colors are considered ""Warm"" according to A-1.37?","""Warm"" colors include red, orange, or yellow, or colors that exhibit a predominance of these hues."
+"Define ""White"" according to A-1.39.1 and A-1.39.2.","A-1.39.1: White is an achromatic sensation of relatively high luminosity.A-1.39.2: Applied to a secondary source, white refers to a source that is non-absorbing at all visible wavelengths."
+"Explain the concept of ""Subtractive Mixture"" as per A-1.31.",Subtractive Mixture refers to the mixture of absorbing media or the superposition of filters so that the composition of the light stimulus passing through the combination is determined by the simultaneous or successive absorption of parts of the spectrum by each medium present.
+What are the three main attributes used to specify colors in the 'Munsell' system?,"Hue, value, and chroma."
+How is hue denoted in the 'Munsell' system?,"Hue is denoted by letters (e.g., R for red, BG for blue-green) with prefix numbers."
+What do the prefix numbers represent in the 'Munsell' system?,The prefix numbers represent the degree or position of hue on the hue circle.
+What does value represent in the 'Munsell' system?,Value is related to the lightness or darkness of a color.
+How is the reflectance of colors of similar values estimated in the 'Munsell' system?,"A rough estimate of reflectance is given by the formula V(V–1), where V is the value."
+How is chroma defined in the 'Munsell' system?,Chroma is the attribute of a visual sensation that indicates the strength of a color.
+What are the recommended symbols for chromaticity coordinates in the CIE 1931 standard colorimetric system?,"x, y, and z."
+What is the illuminant D65 in the 'Munsell' system?,Illuminant D65 represents average north sky daylight temperature with a color temperature of 6500 K.
+What are the tristimulus values in the CIE 1931 standard colorimetric system?,"X, Y, and Z."
+What is the luminance value in the 'Munsell' system?,"The luminance value is the emission by matter of electromagnetic radiation, defined relative to a perfect diffuser under certain conditions."
+What method is used to determine chromatic coordinates in the 'Munsell' system?,Reflectance values are measured for the sample over a circular area of 8 mm in diameter over a wavelength range of 360 to 740 nm at 10 nm intervals using the Minolta CM 3600 D color matching system.
+How is a complete 'Munsell' reference for a color represented?,"It is represented as hue, value, and chroma, for example, 7.5R, 9/2."
+What does a hue of 7.5 R represent in the 'Munsell' system?,A hue of 7.5 R denotes a red inclined towards yellow-red.
+What is the broad description of a color with a 'Munsell' reference of 9/2?," The broad description is ""very light color."""
+How are neutral grays represented in the 'Munsell' system?,"Neutral grays, having no hue or chroma, are denoted by the value figure prefixed by 'N', for example, 'N6' or 'N8'."

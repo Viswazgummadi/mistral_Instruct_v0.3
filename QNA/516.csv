@@ -1,0 +1,50 @@
+Question,Answer
+What foes this IS 516 covers?,"This covers tests for the determinstion of compressive strength, flexural strength and modulus of elasticity of cement concrete."
+How does the sampling will be done?,Test samples of cement shall be made up of a small portion taken from each of a number of bags on the site. Test samples of aggregate shall be taken from larger lots by quartering.
+What should be the least compressive strength of cement for Hard Plaster?,420 kg/sq cm
+ Sulphur caps shall be allowed to harden for how much time before applying the  load.?,Sulphur caps shall be allowed to harden for at least 2 hours before applying the load.
+1. When was the Indian Standard on testing concrete adopted?,1959-11-10 00:00:00
+2. What does systematic testing of concrete help achieve?,Higher efficiency of materials and assurance of performance in strength and durability.
+3. What organizations' standards were considered during the preparation of the Indian Standard?,"British Standards Institution, American Society for Testing Materials, American Concrete Institute, Canadian Engineering Standards Association, Research, Design & Standardization Organization (Ministry of Railways, Government of India), The Concrete Association of India"
+4. What Indian Standard is a necessary adjunct to the concrete testing standard?,IS: 1199-1959
+"5. Which specifications are referenced in the standard for cement, aggregates, and concrete?","IS:269-1958, IS:383:1952, IS:455-1953, IS:456-1957, IS:460-1953"
+6. How are dimensions and values presented in the standard?,In metric units only.
+7. What does the standard chiefly cover?,Technical provisions relating to the testing of concrete.
+8. What tests are covered in the standard?,"Tests for compressive strength, flexural strength, and modulus of elasticity of cement concrete."
+9. What is the maximum nominal size of aggregate allowed for the compression test specimens?,38mm
+10. How should materials be sampled for concrete construction work?,Representative samples obtained by careful sampling.
+11. What is the recommended room temperature for materials before testing?,27°±3°C
+12. What is the recommended method for mixing concrete in the laboratory?,By hand or preferably in a laboratory batch mixer.
+13. How are the quantities of materials for each batch determined?,"By weight, with an accuracy of 0.1 percent of the total weight of the batch."
+14. How should test specimens be compacted?,To produce full compaction without segregation or excessive laitance.
+15. What are the dimensions of the cylindrical test specimens?,15 cm in diameter and 30 cm long.
+1. What is the nominal maximum size of aggregate allowed for compression test specimens in the field?,38mm
+2. How long should compression test specimens be stored under damp matting or similar material on-site?,24 hours ±½hour
+3. What is the recommended temperature range for storage of compression test specimens on-site?,22° to 32°C
+4. What temperature range should the water be maintained at for storing compression test specimens after 24 hours?,24° to 30°C
+5. How should compression test specimens be transported to the testing laboratory?,"Well packed in damp sand, damp sacks, or other suitable material."
+6. What are the permissible error limits for the testing machine used for compression tests?,Not greater than ±2 percent of the maximum load.
+7. How should specimens be placed in the testing machine for compression tests?,In such a manner that the load is applied to opposite sides of the cubes as cast.
+8. How is the compressive strength of a specimen calculated?,By dividing the maximum load applied during the test by the cross-sectional area of the specimen.
+9. What information should be included in the report on each test specimen?,"Identification mark, date of test, age of specimen, curing conditions, weight, dimensions, maximum load, compressive strength, appearance of fractured faces, and type of fracture."
+10. What is the purpose of capping compression test specimens?,To ensure even and perpendicular ends for testing.
+1. What is the approximate difference in compressive strength between the test method in Clause 6 and Clause 5?,Up to 5 percent greater in Clause 6.
+2. What is the recommended temperature range for storing specimens between testing as beams and cubes?,24° to 30°C
+3. How should the broken portions of beams be stored between testing as beams and cubes?,In water at 24° to 30°C.
+4. What are the dimensions of the metal bearing plates for testing broken portions of beams?,"10cm square for 10cm depth, 15cm square for 15cm depth."
+5. How should the upper bearing plate be aligned during the compression test of broken beam portions?,Directly over the lower plate.
+6. What should be done with the surfaces of the specimen before placing them between the bearing plates?,"Wiped clean, and loose sand or other material removed."
+7. How should the load be applied during the compression test of broken beam portions?,"Continuously, without shock, at a rate of approximately 140kg/sqcm/min."
+8. How is the equivalent cube strength of the specimen calculated in Clause 6?,By dividing the maximum load by the area of contact of the bearing plates.
+9. What are the standard sizes of flexure test specimens mentioned in Clause 7?,15×15×70cm or 10×10×50cm.
+10. What is the procedure for determining the flexural strength of molded concrete flexure test specimens?,As described in Clause 8.
+1. What is the purpose of the electrodynamic method described in Clause 10?,"The purpose of the electrodynamic method is to determine the modulus of elasticity of concrete by measuring the natural frequency of the fundamental mode of longitudinal vibration of concrete prisms, providing a non-destructive test."
+2. How can specimens be subsequently used after undergoing the electrodynamic test?,The specimens can be subsequently used for the flexural strength test specified in Clause 8 since the electrodynamic method is non-destructive.
+3. What are the requirements for the specimens used in the electrodynamic method?,"The specimens must comply with the requirements of Clause 9.2, which specifies the dimensions and shapes of the concrete specimens."
+4. What apparatus is required for conducting the electrodynamic test?,"The apparatus required includes a variable frequency oscillator, electro-magnetic exciter unit, electro-magnetic pick-up unit, audio-frequency amplifier, amplitude indicator, and a fixed clamp or support."
+5. How is resonance achieved in the electrodynamic method?,"Resonance is achieved by varying the frequency of excitation until resonance is obtained in the fundamental mode of longitudinal vibration, as indicated by a maximum deflection of the indicator."
+6. What measurements need to be made on the specimen before conducting the electrodynamic test?,"The measurements include weighing the wet specimen, determining its length, and measuring the average depth and breadth of the specimen accurately."
+7. How is the density of the wet concrete specimen calculated?,"The density of the wet concrete is calculated using the formula provided, which involves the weight of the specimen, its length, breadth, and depth."
+8. What formula is used to calculate the dynamic modulus of elasticity in the electrodynamic method?,"The dynamic modulus of elasticity is calculated using the formula: E = 4.083×10^(-9) * n^2 * l^2 * w, where E is the dynamic modulus of elasticity, n is the natural frequency of vibration, l is the length of the specimen, w is the density, and other dimensions are the breadth and depth of the specimen."
+9. How many specimens should be tested for each age of the test in the electrodynamic method?,At least three specimens should be tested for each age of the test to ensure reliability and accuracy of the results.
+10. What information should be included in the report for each specimen tested using the electrodynamic method?,"The report should include the identification mark, date of test, age of specimen, curing conditions, average dimensions of the specimen, weight of the wet specimen, natural frequency of vibration, and the dynamic modulus of elasticity calculated from the test results."

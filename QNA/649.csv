@@ -1,0 +1,51 @@
+Question,Answer
+1. What does IS 649:1997 standard prescribe methods for?,IS 649:1997 standard prescribes methods of test for determining the requirements of magnetic steel sheets and strips used for the construction of magnetic circuits of power electrical apparatus.
+2. What types of tests are covered in IS 649:1997 standard?,"IS 649:1997 standard covers methods for the measurement of magnetic, electrical, physical properties, and insulation coating tests of magnetic steel sheets and strips."
+3. What is the purpose of the standard IS 13795(Part1):1993?,"The standard IS 13795(Part1):1993 provides a glossary of terms relating to special alloys, particularly magnetic materials."
+"4. What is the unit of apparent power, and how is it defined in the standard?","The unit of apparent power is volt-ampere (VA), defined as the product of the rms exciting current and applied rms terminal voltage in an electric circuit containing inductive impedance."
+5. What is the definition of magnetostriction according to the standard?,Magnetostriction is defined as the change in dimensions of a body resulting from magnetization.
+6. What is the purpose of the Core Plate mentioned in the standard?,The Core Plate is a generic term for any insulating material used in the construction of laminated and tape-wound cores.
+7. What is the scope of Section 1 of the standard regarding magnetic testing?,"Section 1 of the standard covers testing conditions and test items related to magnetic properties, including a.c. and d.c. magnetization characteristic tests, iron loss tests, and apparent power tests at commercial frequency."
+8. At what temperature should magnetic tests be conducted according to the standard?,Magnetic tests should be conducted at 27±5°C according to the standard.
+9. How should the Epstein test specimen be prepared for grain-oriented steel sheets?,"For grain-oriented steel sheets, the strips should be cut parallel to the direction of rolling and stress-relief annealed after cutting at a temperature of 800±20°C in a non-oxidizing, carbon-free atmosphere."
+10. What is the primary circuit current rating recommended by the standard for conducting tests?,The primary circuit current rating of 30A is usually adequate for conducting tests according to the standard.
+1. What is the specified temperature range for conducting magnetic tests according to the standard?,27±5°C
+2. What is the discrepancy tolerance between the form factors of secondary induced voltage and sine wave in a.c. magnetization according to the standard?,±5 percent
+3. What is the minimum number of test pieces required for a sheet with a thickness of 0.65 mm?,16
+4. What is the recommended width of the test strips for the Epstein test specimen?,30mm
+"5. How long should the strips for the Epstein test specimen be, according to the standard?",Not less than 280mm
+6. What is the recommended silicon content assumed density for magnetic sheets with a silicon content over 3.5 to 5.0 percent?,7.55 g/cm3
+7. What is the maximum induction limit for conducting tests on non-oriented electrical steels according to the standard?,15kG (1.5T)
+8. What is the frequency range covered by the test method described in Section 2 of the standard?,25 to 400Hz
+9. What is the maximum magnetizing force limit for calculating a.c. peak permeability according to the standard?,About 150Oe (12000A/m)
+10. What is the primary circuit current rating recommended by the standard for conducting tests?,30A
+1. What is the purpose of the mutual inductor in the Epstein test frame?,To compensate for air-flux within the solenoids
+2. What is the recommended configuration for connecting the potential windings of the solenoids in the Epstein test frame?,Connected in series so their voltages will add
+3. What is the recommended number of turns for the solenoid windings in the test frame for tests in the frequency range of 25 to 400Hz?,700 turns
+4. What is the primary function of the flux voltmeter (Vf) in the apparatus setup?,To evaluate the peak value of the test induction
+5. What is the maximum permissible error for the full scale meter error of the flux voltmeter according to the standard?,0.25 percent
+6. What is the purpose of the RMS voltmeter (Vrms) in the apparatus setup?,To evaluate the form factor of the voltage induced in the secondary winding
+7. What type of wattmeter is desirable for specimens lighter than about 6g/mm of strip length?,Reflecting type electrodynamometer wattmeter
+8. What is the requirement for the resistance of the potential circuit of the electrodynamometer wattmeter for general testing?,Not less than 100ohms per volt full-scale for each voltage range
+9. What is the primary function of the RMS ammeter (A) in the apparatus setup?,To measure the rms value of the exciting current
+10. What is the primary function of the mutual-inductor peak ammeter in the apparatus setup?,To determine the peak value of the exciting current for evaluating the a.c. magnetizing force
+1. What is the purpose of the Franklin Tester?,"It is used for testing the surface insulation resistivity of single strips or punchings of flat rolled electrical steel under predetermined conditions of voltage, pressure, and temperature."
+2. What is the recommended minimum size for a specimen strip in the surface insulation resistivity test method?,The suggested minimum specimen size is 50mm×125mm.
+3. What is the significance of the average electrical current measurement in the surface insulation resistivity test method?,"It indicates the effectiveness of the surface insulation, with current ranging from zero for a perfect insulator to 1.00 A for a perfect conductor."
+4. How are electrical contacts made with the base metal in the surface insulation resistivity test method?,"Electrical contact with the base metal is made through two 3mm diameter twist drills or hardened and pointed rods, vertically mounted and spring-loaded in spiral slotted sleeves."
+5. What is the purpose of the immersion method in determining the density of the magnetic sheet?,"The immersion method is a fundamental way to determine density and is used for establishing densities for commercial iron base flat rolled products, particularly in arbitration cases."
+6. What factors influence the accuracy of determining the magnetizing force 𝐻H in the Epstein frame test method?,"The accuracy of determining 𝐻H depends on the accuracy of current measurement, maintaining identical current after reversal, accuracy in determining magnetic path length, and uncertainties due to corner joints in the Epstein frame."
+7. How is the accuracy of determining flux density 𝐵B affected in the Epstein frame test method?,"The accuracy of determining 𝐵B depends on the quality of integrator calibration, uniformity of material, and accuracy in determining the cross-sectional area of the test specimen."
+8. What is the expected error range for material permeability determinations in the Epstein test-frame method?,The material permeability determinations should be within ±3 percent in the Epstein test-frame method.
+9. What apparatus is used in the determination of the resistivity of magnetic sheet and strip?,A Kelvin type resistance bridge or a d.c. potentiometer and d-c ammeter are used for the determination of the resistivity of magnetic sheet and strip.
+10. How is the resistivity of the material calculated in the determination of the resistivity of magnetic sheet and strip method?,"The resistivity 𝜌ρ is calculated using the formula 𝜌=𝑅𝐴𝑙2ρ=l2RA​, where 𝑅R is the resistance, 𝐴A is the cross-sectional area, and 𝑙l is the length of the electrical path."
+1. What is the method recommended for determining the density of magnetic sheet in industrial tests?,Electrical Method
+2. What is the minimum recommended width for the metal plates used in the compression device for stacking factor testing?,50mm
+3. What is the formula for calculating the percentage stacking factor?,𝑆=𝑚/𝑤𝑙𝑡×100
+4. What is the purpose of the apparatus used in the determination of ductility for non-oriented electrical steel sheets?,To repeatedly bend the test strip over a predetermined radius until a crack appears or sudden failure occurs.
+5. How is the number of bends withstood by the test specimen determined in the ductility test?,"Each full 180° bend, including the first 90° bend, is counted as one bend."
+"6. What is the purpose of the thinner’s brake, hand folder, or apron brake in the ductility test for grain-oriented electrical steel sheets?",To bend the test specimen through an angle of about 160 degrees.
+7. How is the class rating determined in the ductility test for grain-oriented electrical steel sheets?,"Based on the number of breaks along the bend, with larger numerical class ratings corresponding to a larger number of breaks and poorer ductility."
+8. What does the variation 'c' from the shearing line measure?,"It measures the greatest distance between the related edges of a sheet cut longitudinally, serving as a measure of internal stresses."
+9. How is the percentage wave factor (Waviness W) calculated?,"𝑊=100ℎ𝑙W=l100h​, where 'h' is the height of the wave and 'l' is the length of the wave."
+10. What test method is used to check the resistance of insulation coating to transformer oil?,"The samples are immersed in transformer oil, heated to 100 – 120°C for eight hours, and then weighed before and after immersion."
