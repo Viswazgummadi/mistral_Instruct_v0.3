@@ -79,7 +79,8 @@ dataset = Dataset.from_dict(data)
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-model_id="mistralai/Mistral-7B-Instruct-v0.2"
+# model_id="mistralai/Mistral-7B-Instruct-v0.2"
+model_id="Dobby091/KOKO"
 # Load the tokenizer and the model
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(
