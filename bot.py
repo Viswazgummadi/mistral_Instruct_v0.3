@@ -1,73 +1,73 @@
 import os
-import PyPDF2
-import pandas as pd
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from datasets import load_dataset
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+import torch
+import re
+device = "cuda"
+model_id = "Dobby091/KOKO"
+nf4_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_use_double_quant=False,
+    bnb_4bit_compute_dtype=torch.bfloat16
+)
+os.environ["HF_TOKEN"] = "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"
+os.environ['HF_HOME'] = '/mnt/data1/backup/viswaz/Project_K/huggingface_cache/'
 
-def extract_text_from_pdf(file_path):
-    with open(file_path, 'rb') as pdf_file_obj:
-        pdf_reader = PyPDF2.PdfReader(pdf_file_obj)
-        text = ''
-        for page_obj in pdf_reader.pages:
-            text += page_obj.extract_text()
-    return text
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    device_map="auto",
+    quantization_config=nf4_config,
+    torch_dtype=torch.bfloat16,
+    trust_remote_code=True,
+    cache_dir="/mnt/data1/backup/viswaz/Project_K/huggingface_cache/",
 
-def prepare_qa_data(qa_directory, pdf_directory):
-    qa_data = []
-    for filename in os.listdir(qa_directory):
-        # Check if the file is a CSV
-        if filename.endswith('.csv'):
-            # Construct the full file path
-            csv_file_path = os.path.join(qa_directory, filename)
-            # Extract the base name of the file (without extension)
-            base_filename = os.path.splitext(filename)[0]
-            # Construct the full file path of the corresponding PDF
-            pdf_file_path = os.path.join(pdf_directory, f'{base_filename}.pdf')
-            # Read the CSV file
-            qa_df = pd.read_csv(csv_file_path, converters={'Question': str,'Answer': str})
-            # Extract the text from the PDF file
-            text = extract_text_from_pdf(pdf_file_path)
-            # Preprocess the text
-            # preprocessed_text = preprocess_text(text)
-            # Iterate over the rows in the CSV file
-            for _, row in qa_df.iterrows():
-                question = row['Question']
-                answer = row['Answer']
-                # Include the filename of the corresponding PDF
-                pdf_filename = base_filename + '.pdf'
-                qa_data.append({'pdf_filename': pdf_filename, 'context': text, 'question': question, 'answer': answer })
-    return qa_data
+)
 
-qa_directory = 'QNA'
-pdf_directory = 'pdf'
-qa_data = prepare_qa_data(qa_directory, pdf_directory)
-print(len(qa_data))
+tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-import json
-
-def save_as_jsonl(data, filename):
-    with open(filename, 'w') as f:
-        for i in data:
-            json_str = json.dumps(i)
-            print(json_str)
-            f.write(json_str + "\n")
-
-qa_directory = 'QNA'
-pdf_directory = 'pdf'
-qa_data = prepare_qa_data(qa_directory, pdf_directory)
-
-train_size = int(len(qa_data) * 0.8)
-train_data = qa_data[:train_size]
-test_data = qa_data[train_size:]
-
-save_as_jsonl(train_data, "train.jsonl")
-save_as_jsonl(test_data, "test.jsonl")
+tokenizer.pad_token = tokenizer.eos_token
+tokenizer.padding_side = "right"
 
 
-data_files = {"train":"train.jsonl", "test":"test.jsonl"}
-dataset = load_dataset("json", data_files=data_files)
-dataset
-print(dataset["train"][0])
-dataset.push_to_hub("KOKO")
+def generate_response(prompt, model, max_output_tokens=256, num_beams=5, length_penalty=1.3, num_return_sequences=1):
+    encoded_input = tokenizer(
+        prompt, return_tensors="pt", add_special_tokens=True)
+    model_inputs = encoded_input.to(device)
+
+    try:
+        generated_ids = model.generate(
+            **model_inputs,
+            max_new_tokens=max_output_tokens,
+            num_beams=num_beams,
+            length_penalty=length_penalty,
+            num_return_sequences=num_return_sequences,
+            pad_token_id=tokenizer.eos_token_id,
+            early_stopping=True
+        )
+
+        decoded_output = tokenizer.batch_decode(generated_ids)
+
+        answer = decoded_output[0].split('<s>')[1].split('\n')
+    # remove the last line, which is an empty line
+        answer = '\n'.join(answer[:-1])
+        lines = answer.split('\n')
+        for i, line in enumerate(lines):
+            if re.match(r'^\d+\s*$', line, re.MULTILINE):
+                answer = '\n'.join(lines[:i])
+                break
+
+        return answer
+
+    except Exception as e:
+        print(f"Error during generation: {e}")
+        return None
+
+
+prompt = """
+What does value represent in the 'Munsell' system?"""
+
+
+response = generate_response(
+    prompt, model, num_beams=5, length_penalty=0.8, num_return_sequences=3)
+
+print(response)

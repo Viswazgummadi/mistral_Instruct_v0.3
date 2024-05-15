@@ -19,7 +19,7 @@ adam_beta2: 0.999
 adam_epsilon: 1e-08
 max_grad_norm: 1.0
 num_train_epochs: 3.0
-max_steps: 150
+max_steps: 260
 lr_scheduler_type: constant
 lr_scheduler_kwargs: {}
 warmup_ratio: 0.0
@@ -27,7 +27,7 @@ warmup_steps: 0.03
 log_level: passive
 log_level_replica: warning
 log_on_each_node: true
-logging_dir: KOKO/runs/May15_00-52-11_gpu2.iitd.local
+logging_dir: KOKO/runs/May15_12-08-34_gpu2.iitd.local
 logging_strategy: steps
 logging_first_step: false
 logging_steps: 10
