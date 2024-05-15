@@ -47,14 +47,7 @@ def generate_response(prompt, model, max_output_tokens=256, num_beams=5, length_
 
         decoded_output = tokenizer.batch_decode(generated_ids)
 
-        answer = decoded_output[0].split('<s>')[1].split('\n')
-    # remove the last line, which is an empty line
-        answer = '\n'.join(answer[:-1])
-        lines = answer.split('\n')
-        for i, line in enumerate(lines):
-            if re.match(r'^\d+\s*$', line, re.MULTILINE):
-                answer = '\n'.join(lines[:i])
-                break
+        answer = decoded_output[0]
 
         return answer
 
@@ -64,7 +57,7 @@ def generate_response(prompt, model, max_output_tokens=256, num_beams=5, length_
 
 
 prompt = """
-What does value represent in the 'Munsell' system?"""
+what is the dimensions for the terra cotta according to the IS 5 : 2004?"""
 
 
 response = generate_response(
